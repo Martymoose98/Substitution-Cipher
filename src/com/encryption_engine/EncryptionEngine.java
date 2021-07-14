@@ -160,24 +160,56 @@ public class EncryptionEngine
 		return in;
 	}
 
-	private char transpose(char keych, char c)
+	private char transpose(char keych, char c) 
+	{
+		return (char)((short)(c + keych) % 26 + 0x41);
+	}
+
+	private char untranspose(char keych, char c)
+	{
+		return (char)((short)(c - keych + 26) % 26 + 0x41);
+	}
+	
+	private char transposeV2(char keych, char c) 
 	{
 		short nShift = (short) ((byte) keych - 0x41);
 		return shift(c, nShift);
 	}
 
-	private char untranspose(char keych, char c)
+	private char untransposeV2(char keych, char c)
 	{
-		short nShift = (short) (0x41 - (byte) keych);
+		short nShift = (short) ((byte) keych - 0x41);
 		return unshift(c, nShift);
 	}
-
-	private char shift(char c, short n)
+	
+	private char transposeV3(char keych, char c) 
 	{
-		return (char) ((c + n > 0x5A) ? c - (0x1A - n) : c + n);
+		short nShift = (short) ((byte) keych - 0x41);
+		return shiftV2(c, nShift);
+	}
+
+	private char untransposeV3(char keych, char c)
+	{
+		short nShift = (short) (0x41 - (byte) keych);
+		return unshiftV2(c, nShift);
+	}
+	
+	private char shift(char c, short n)
+	{	
+		return (char) (0x41 + ((c - 0x41) + n) % 26);
 	}
 
 	private char unshift(char c, short n)
+	{
+		return (char) (0x41 + ((c + 0x41) - n) % 26);
+	}
+	
+	private char shiftV2(char c, short n)
+	{	
+		return (char) ((c + n > 0x5A) ? c - (0x1A - n) : c + n);
+	}
+
+	private char unshiftV2(char c, short n)
 	{
 		return (char) ((c + n < 0x41) ? c + (0x1A + n) : c + n);
 	}
